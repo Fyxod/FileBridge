@@ -78,10 +78,10 @@
   <div class="card">
     <h2>Storage</h2>
     <p>Total files: <%= storage.count %></p>
-    <p>Total size: <%= storage.totalSize %> bytes</p>
+    <p>Total size: <%- include('_filesize', { size: storage.totalSize }) %></p>
     <ul>
       <% storageByType.forEach((item) => { %>
-        <li><%= item._id %>: <%= item.totalSize %> bytes</li>
+        <li><%= item._id %>: <%- include('_filesize', { size: item.totalSize }) %></li>
       <% }) %>
     </ul>
   </div>
@@ -109,10 +109,10 @@
               <strong><%= file.name %></strong><br>
               <span class="muted"><%= file.originalName %></span>
               <% if (file.access && file.access.shareToken) { %>
-                <div class="muted">Share link: /files/share/<%= file.access.shareToken %></div>
+                <div class="muted">Share link: <a href="http://localhost:3000/files/share/<%= file.access.shareToken %>" target="_blank">localhost:3000/files/share/<%= file.access.shareToken %></a></div>
               <% } %>
             </td>
-            <td><%= file.size %></td>
+            <td><%- include('_filesize', { size: file.size }) %></td>
             <td><%= file.access.visibility %></td>
             <td><%= (file.tags || []).join(", ") %></td>
             <td>

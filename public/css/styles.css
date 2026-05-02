@@ -125,3 +125,17 @@ button,
     padding: 8px;
     margin-top: 8px;
 }
+
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.muted a {
+    color: #0ea5e9;
+    font-weight: 500;
+}

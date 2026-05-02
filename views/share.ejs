@@ -4,7 +4,7 @@
 <section class="card">
   <p><strong>Name:</strong> <%= file.name %></p>
   <p><strong>Type:</strong> <%= file.mimeType %></p>
-  <p><strong>Size:</strong> <%= file.size %> bytes</p>
+  <p><strong>Size:</strong> <%- include('_filesize', { size: file.size }) %></p>
   <form method="post" action="/files/share/<%= file.access.shareToken %>/download">
     <button type="submit">Download</button>
   </form>
