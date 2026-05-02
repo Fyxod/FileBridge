@@ -1,13 +1,27 @@
 <%- include("partials/header", { title: "Dashboard" }) %>
-<h1>Files</h1>
+<section class="hero hero-dashboard">
+  <div>
+    <p class="eyebrow">Personal vault</p>
+    <h1>Store, find, and share files without the clutter.</h1>
+    <p class="lede">A cleaner command center for uploads, access control, links, favorites, and storage insights.</p>
+  </div>
+  <div class="hero-panel">
+    <span class="metric-label">Total storage</span>
+    <strong><%- include('_filesize', { size: storage.totalSize }) %></strong>
+    <span><%= storage.count %> files protected in FileBridge</span>
+  </div>
+</section>
 
 <% if (error) { %>
-  <p class="error">Error: <%= error %></p>
+  <p class="alert alert-error">Error: <%= error %></p>
 <% } %>
 
 <section class="grid">
-  <div class="card">
-    <h2>Upload</h2>
+  <div class="card card-feature">
+    <div class="card-heading">
+      <p class="eyebrow">Add something new</p>
+      <h2>Upload</h2>
+    </div>
     <form method="post" action="/files/upload" enctype="multipart/form-data" class="form">
       <label>File</label>
       <input type="file" name="file" required>
@@ -41,7 +55,10 @@
   </div>
 
   <div class="card">
-    <h2>Search</h2>
+    <div class="card-heading">
+      <p class="eyebrow">Refine the list</p>
+      <h2>Search</h2>
+    </div>
     <form method="get" action="/files" class="form">
       <label>Query</label>
       <input name="q" value="<%= filters.q || "" %>">
@@ -76,22 +93,46 @@
   </div>
 
   <div class="card">
-    <h2>Storage</h2>
-    <p>Total files: <%= storage.count %></p>
-    <p>Total size: <%- include('_filesize', { size: storage.totalSize }) %></p>
-    <ul>
+    <div class="card-heading">
+      <p class="eyebrow">Usage snapshot</p>
+      <h2>Storage</h2>
+    </div>
+    <div class="stats">
+      <div>
+        <span>Total files</span>
+        <strong><%= storage.count %></strong>
+      </div>
+      <div>
+        <span>Total size</span>
+        <strong><%- include('_filesize', { size: storage.totalSize }) %></strong>
+      </div>
+    </div>
+    <ul class="storage-list">
       <% storageByType.forEach((item) => { %>
-        <li><%= item._id %>: <%- include('_filesize', { size: item.totalSize }) %></li>
+        <li>
+          <span><%= item._id %></span>
+          <strong><%- include('_filesize', { size: item.totalSize }) %></strong>
+        </li>
       <% }) %>
     </ul>
   </div>
 </section>
 
 <section class="card">
-  <h2>Files</h2>
+  <div class="section-title">
+    <div>
+      <p class="eyebrow">Library</p>
+      <h2>Files</h2>
+    </div>
+    <span class="pill"><%= files.length %> visible</span>
+  </div>
   <% if (!files.length) { %>
-    <p>No files yet.</p>
+    <div class="empty-state">
+      <h3>No files yet</h3>
+      <p>Upload your first file above and it will appear here with sharing controls.</p>
+    </div>
   <% } else { %>
+    <div class="table-wrap">
     <table class="table">
       <thead>
         <tr>
@@ -106,33 +147,48 @@
         <% files.forEach((file) => { %>
           <tr>
             <td>
-              <strong><%= file.name %></strong><br>
-              <span class="muted"><%= file.originalName %></span>
+              <div class="file-cell">
+                <span class="file-icon"><%= (file.name || "?").charAt(0).toUpperCase() %></span>
+                <div>
+                  <strong><%= file.name %></strong><br>
+                  <span class="muted"><%= file.originalName %> · <%= file.folderPath || "/" %></span>
+                </div>
+              </div>
               <% if (file.access && file.access.shareToken) { %>
-                <div class="muted">Share link: <a href="http://localhost:3000/files/share/<%= file.access.shareToken %>" target="_blank">localhost:3000/files/share/<%= file.access.shareToken %></a></div>
+                <div class="share-link">Share link: <a href="http://localhost:3000/files/share/<%= file.access.shareToken %>" target="_blank">localhost:3000/files/share/<%= file.access.shareToken %></a></div>
               <% } %>
             </td>
             <td><%- include('_filesize', { size: file.size }) %></td>
-            <td><%= file.access.visibility %></td>
-            <td><%= (file.tags || []).join(", ") %></td>
+            <td><span class="badge badge-<%= file.access.visibility %>"><%= file.access.visibility %></span></td>
+            <td>
+              <div class="tag-list">
+                <% if ((file.tags || []).length) { %>
+                  <% file.tags.forEach((tag) => { %>
+                    <span><%= tag %></span>
+                  <% }) %>
+                <% } else { %>
+                  <span class="muted">No tags</span>
+                <% } %>
+              </div>
+            </td>
             <td>
               <div class="actions">
-                <form method="post" action="/files/<%= file._id %>/rename" class="inline">
+                <form method="post" action="/files/<%= file._id %>/rename" class="inline action-form">
                   <input name="name" value="<%= file.name %>">
                   <button type="submit">Rename</button>
                 </form>
 
-                <form method="post" action="/files/<%= file._id %>/move" class="inline">
+                <form method="post" action="/files/<%= file._id %>/move" class="inline action-form">
                   <input name="folderPath" value="<%= file.folderPath %>">
                   <button type="submit">Move</button>
                 </form>
 
-                <form method="post" action="/files/<%= file._id %>/tags" class="inline">
+                <form method="post" action="/files/<%= file._id %>/tags" class="inline action-form">
                   <input name="tags" value="<%= (file.tags || []).join(", ") %>">
                   <button type="submit">Tags</button>
                 </form>
 
-                <form method="post" action="/files/<%= file._id %>/access" class="inline">
+                <form method="post" action="/files/<%= file._id %>/access" class="inline action-form action-form-wide">
                   <select name="visibility">
                     <option value="private" <%= file.access.visibility === "private" ? "selected" : "" %>>Private</option>
                     <option value="public" <%= file.access.visibility === "public" ? "selected" : "" %>>Public</option>
@@ -146,16 +202,16 @@
                 </form>
 
                 <form method="post" action="/files/<%= file._id %>/share-link" class="inline">
-                  <button type="submit"><%= file.access.shareToken ? "Revoke link" : "Create link" %></button>
+                  <button class="button-secondary" type="submit"><%= file.access.shareToken ? "Revoke link" : "Create link" %></button>
                 </form>
 
                 <form method="post" action="/files/<%= file._id %>/favorite" class="inline">
-                  <button type="submit"><%= favorites.has(file._id.toString()) ? "Unfavorite" : "Favorite" %></button>
+                  <button class="button-secondary" type="submit"><%= favorites.has(file._id.toString()) ? "Unfavorite" : "Favorite" %></button>
                 </form>
 
                 <a class="button" href="/files/<%= file._id %>/download">Download</a>
                 <form method="post" action="/files/<%= file._id %>/delete" class="inline">
-                  <button type="submit">Delete</button>
+                  <button class="button-danger" type="submit">Delete</button>
                 </form>
               </div>
             </td>
@@ -163,6 +219,7 @@
         <% }) %>
       </tbody>
     </table>
+    </div>
   <% } %>
 </section>
 <%- include("partials/footer") %>

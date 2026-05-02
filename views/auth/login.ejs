@@ -1,19 +1,29 @@
 <%- include("../partials/header", { title: "Login" }) %>
-<h1>Login</h1>
+<section class="auth-layout">
+  <div class="auth-hero">
+    <p class="eyebrow">Welcome back</p>
+    <h1>Step back into your secure file hub.</h1>
+    <p class="lede">Upload, organize, and share files with clearer controls and less noise.</p>
+  </div>
 
 <% if (error) { %>
-  <p class="error"><%= error %></p>
+  <p class="alert alert-error"><%= error %></p>
 <% } %>
 
-<form method="post" action="/auth/login" class="card form">
-  <label>User ID or Email</label>
-  <input name="identifier" required value="<%= identifier || "" %>">
+  <form method="post" action="/auth/login" class="card form auth-card">
+    <div class="card-heading">
+      <p class="eyebrow">Sign in</p>
+      <h2>Login</h2>
+    </div>
+    <label>User ID or Email</label>
+    <input name="identifier" required value="<%= identifier || "" %>">
 
-  <label>Password</label>
-  <input type="password" name="password" required>
+    <label>Password</label>
+    <input type="password" name="password" required>
 
-  <button type="submit">Login</button>
-</form>
+    <button type="submit">Login</button>
+  </form>
 
-<p>Need an account? <a href="/auth/register">Register</a></p>
+  <p class="auth-switch">Need an account? <a href="/auth/register">Register</a></p>
+</section>
 <%- include("../partials/footer") %>

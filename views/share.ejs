@@ -1,10 +1,20 @@
 <%- include("partials/header", { title: "Shared File" }) %>
-<h1>Shared file</h1>
+<section class="hero hero-compact">
+  <div>
+    <p class="eyebrow">Shared file</p>
+    <h1>Your download is ready.</h1>
+    <p class="lede">This file was shared through a FileBridge secure link.</p>
+  </div>
+</section>
 
-<section class="card">
-  <p><strong>Name:</strong> <%= file.name %></p>
-  <p><strong>Type:</strong> <%= file.mimeType %></p>
-  <p><strong>Size:</strong> <%- include('_filesize', { size: file.size }) %></p>
+<section class="card shared-card">
+  <div class="file-cell file-cell-large">
+    <span class="file-icon"><%= (file.name || "?").charAt(0).toUpperCase() %></span>
+    <div>
+      <h2><%= file.name %></h2>
+      <p class="muted"><%= file.mimeType %> · <%- include('_filesize', { size: file.size }) %></p>
+    </div>
+  </div>
   <form method="post" action="/files/share/<%= file.access.shareToken %>/download">
     <button type="submit">Download</button>
   </form>

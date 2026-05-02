@@ -1,25 +1,35 @@
 <%- include("../partials/header", { title: "Register" }) %>
-<h1>Create an account</h1>
+<section class="auth-layout">
+  <div class="auth-hero">
+    <p class="eyebrow">Start safely</p>
+    <h1>Create a polished home for your files.</h1>
+    <p class="lede">FileBridge keeps uploads, group access, and share links in one approachable workspace.</p>
+  </div>
 
 <% if (error) { %>
-  <p class="error"><%= error %></p>
+  <p class="alert alert-error"><%= error %></p>
 <% } %>
 
-<form method="post" action="/auth/register" class="card form">
-  <label>User ID</label>
-  <input name="userId" required value="<%= values.userId || "" %>">
+  <form method="post" action="/auth/register" class="card form auth-card">
+    <div class="card-heading">
+      <p class="eyebrow">New account</p>
+      <h2>Register</h2>
+    </div>
+    <label>User ID</label>
+    <input name="userId" required value="<%= values.userId || "" %>">
 
-  <label>Email</label>
-  <input type="email" name="email" required value="<%= values.email || "" %>">
+    <label>Email</label>
+    <input type="email" name="email" required value="<%= values.email || "" %>">
 
-  <label>Name</label>
-  <input name="name" value="<%= values.name || "" %>">
+    <label>Name</label>
+    <input name="name" value="<%= values.name || "" %>">
 
-  <label>Password</label>
-  <input type="password" name="password" required>
+    <label>Password</label>
+    <input type="password" name="password" required>
 
-  <button type="submit">Register</button>
-</form>
+    <button type="submit">Register</button>
+  </form>
 
-<p>Already have an account? <a href="/auth/login">Login</a></p>
+  <p class="auth-switch">Already have an account? <a href="/auth/login">Login</a></p>
+</section>
 <%- include("../partials/footer") %>

@@ -1,4 +1,8 @@
 <%- include("partials/header", { title: "Error" }) %>
-<h1>Something went wrong</h1>
-<p><%= error.message || "Unexpected error" %></p>
+<section class="card state-card">
+  <p class="eyebrow">Error</p>
+  <h1>Something went wrong</h1>
+  <p><%= error.message || "Unexpected error" %></p>
+  <a class="button" href="/files">Back to files</a>
+</section>
 <%- include("partials/footer") %>

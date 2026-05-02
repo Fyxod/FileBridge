@@ -6,21 +6,29 @@
   <title><%= title %> - FileBridge</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
+<body class="page-<%= (title || "app").toLowerCase().replace(/[^a-z0-9]+/g, "-") %>">
   <header class="site-header">
-    <div class="brand">FileBridge</div>
+    <a class="brand" href="<%= currentUser ? "/files" : "/auth/login" %>">
+      <span class="brand-mark">FB</span>
+      <span class="brand-copy">
+        <strong>FileBridge</strong>
+        <small>Secure file sharing</small>
+      </span>
+    </a>
     <nav class="nav">
       <% if (currentUser) { %>
-        <a href="/files">Files</a>
-        <a href="/groups">Groups</a>
-        <span class="user">Signed in as <%= currentUser.userId %></span>
+        <a class="nav-link" href="/files">Files</a>
+        <a class="nav-link" href="/groups">Groups</a>
+        <span class="user">Signed in as <strong><%= currentUser.userId %></strong></span>
         <form class="inline" action="/auth/logout" method="post">
-          <button type="submit">Logout</button>
+          <button class="button button-ghost" type="submit">Logout</button>
         </form>
       <% } else { %>
-        <a href="/auth/login">Login</a>
-        <a href="/auth/register">Register</a>
+        <a class="nav-link" href="/auth/login">Login</a>
+        <a class="button button-light" href="/auth/register">Register</a>
       <% } %>
     </nav>
   </header>
+  <div class="background-orb background-orb-one"></div>
+  <div class="background-orb background-orb-two"></div>
   <main class="container">
