@@ -1,0 +1,25 @@
+<%- include("../partials/header", { title: "Register" }) %>
+<h1>Create an account</h1>
+
+<% if (error) { %>
+  <p class="error"><%= error %></p>
+<% } %>
+
+<form method="post" action="/auth/register" class="card form">
+  <label>User ID</label>
+  <input name="userId" required value="<%= values.userId || "" %>">
+
+  <label>Email</label>
+  <input type="email" name="email" required value="<%= values.email || "" %>">
+
+  <label>Name</label>
+  <input name="name" value="<%= values.name || "" %>">
+
+  <label>Password</label>
+  <input type="password" name="password" required>
+
+  <button type="submit">Register</button>
+</form>
+
+<p>Already have an account? <a href="/auth/login">Login</a></p>
+<%- include("../partials/footer") %>

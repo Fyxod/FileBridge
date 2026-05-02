@@ -1,0 +1,168 @@
+<%- include("partials/header", { title: "Dashboard" }) %>
+<h1>Files</h1>
+
+<% if (error) { %>
+  <p class="error">Error: <%= error %></p>
+<% } %>
+
+<section class="grid">
+  <div class="card">
+    <h2>Upload</h2>
+    <form method="post" action="/files/upload" enctype="multipart/form-data" class="form">
+      <label>File</label>
+      <input type="file" name="file" required>
+
+      <label>Display name</label>
+      <input name="name" placeholder="Optional name">
+
+      <label>Tags</label>
+      <input name="tags" placeholder="tag1,tag2">
+
+      <label>Folder</label>
+      <input name="folderPath" placeholder="/projects">
+
+      <label>Visibility</label>
+      <select name="visibility">
+        <option value="private">Private</option>
+        <option value="public">Public</option>
+        <option value="users">Specific users</option>
+        <option value="groups">Specific groups</option>
+        <option value="link">Share link</option>
+      </select>
+
+      <label>Allowed user IDs</label>
+      <input name="allowedUserIds" placeholder="user1,user2">
+
+      <label>Allowed group names</label>
+      <input name="allowedGroupNames" placeholder="team-alpha,team-beta">
+
+      <button type="submit">Upload</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Search</h2>
+    <form method="get" action="/files" class="form">
+      <label>Query</label>
+      <input name="q" value="<%= filters.q || "" %>">
+
+      <label>Tag</label>
+      <input name="tag" value="<%= filters.tag || "" %>">
+
+      <label>Type</label>
+      <input name="type" value="<%= filters.type || "" %>">
+
+      <label>From</label>
+      <input type="date" name="from" value="<%= filters.from || "" %>">
+
+      <label>To</label>
+      <input type="date" name="to" value="<%= filters.to || "" %>">
+
+      <label>Sort</label>
+      <select name="sort">
+        <option value="createdAt">Date</option>
+        <option value="name" <%= filters.sort === "name" ? "selected" : "" %>>Name</option>
+        <option value="size" <%= filters.sort === "size" ? "selected" : "" %>>Size</option>
+      </select>
+
+      <label>Order</label>
+      <select name="order">
+        <option value="desc">Desc</option>
+        <option value="asc" <%= filters.order === "asc" ? "selected" : "" %>>Asc</option>
+      </select>
+
+      <button type="submit">Apply</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Storage</h2>
+    <p>Total files: <%= storage.count %></p>
+    <p>Total size: <%= storage.totalSize %> bytes</p>
+    <ul>
+      <% storageByType.forEach((item) => { %>
+        <li><%= item._id %>: <%= item.totalSize %> bytes</li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Files</h2>
+  <% if (!files.length) { %>
+    <p>No files yet.</p>
+  <% } else { %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Size</th>
+          <th>Visibility</th>
+          <th>Tags</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% files.forEach((file) => { %>
+          <tr>
+            <td>
+              <strong><%= file.name %></strong><br>
+              <span class="muted"><%= file.originalName %></span>
+              <% if (file.access && file.access.shareToken) { %>
+                <div class="muted">Share link: /files/share/<%= file.access.shareToken %></div>
+              <% } %>
+            </td>
+            <td><%= file.size %></td>
+            <td><%= file.access.visibility %></td>
+            <td><%= (file.tags || []).join(", ") %></td>
+            <td>
+              <div class="actions">
+                <form method="post" action="/files/<%= file._id %>/rename" class="inline">
+                  <input name="name" value="<%= file.name %>">
+                  <button type="submit">Rename</button>
+                </form>
+
+                <form method="post" action="/files/<%= file._id %>/move" class="inline">
+                  <input name="folderPath" value="<%= file.folderPath %>">
+                  <button type="submit">Move</button>
+                </form>
+
+                <form method="post" action="/files/<%= file._id %>/tags" class="inline">
+                  <input name="tags" value="<%= (file.tags || []).join(", ") %>">
+                  <button type="submit">Tags</button>
+                </form>
+
+                <form method="post" action="/files/<%= file._id %>/access" class="inline">
+                  <select name="visibility">
+                    <option value="private" <%= file.access.visibility === "private" ? "selected" : "" %>>Private</option>
+                    <option value="public" <%= file.access.visibility === "public" ? "selected" : "" %>>Public</option>
+                    <option value="users" <%= file.access.visibility === "users" ? "selected" : "" %>>Users</option>
+                    <option value="groups" <%= file.access.visibility === "groups" ? "selected" : "" %>>Groups</option>
+                    <option value="link" <%= file.access.visibility === "link" ? "selected" : "" %>>Link</option>
+                  </select>
+                  <input name="allowedUserIds" placeholder="user1,user2">
+                  <input name="allowedGroupNames" placeholder="team-alpha,team-beta">
+                  <button type="submit">Share</button>
+                </form>
+
+                <form method="post" action="/files/<%= file._id %>/share-link" class="inline">
+                  <button type="submit"><%= file.access.shareToken ? "Revoke link" : "Create link" %></button>
+                </form>
+
+                <form method="post" action="/files/<%= file._id %>/favorite" class="inline">
+                  <button type="submit"><%= favorites.has(file._id.toString()) ? "Unfavorite" : "Favorite" %></button>
+                </form>
+
+                <a class="button" href="/files/<%= file._id %>/download">Download</a>
+                <form method="post" action="/files/<%= file._id %>/delete" class="inline">
+                  <button type="submit">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
+<%- include("partials/footer") %>

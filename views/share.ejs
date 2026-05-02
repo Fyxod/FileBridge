@@ -1,0 +1,12 @@
+<%- include("partials/header", { title: "Shared File" }) %>
+<h1>Shared file</h1>
+
+<section class="card">
+  <p><strong>Name:</strong> <%= file.name %></p>
+  <p><strong>Type:</strong> <%= file.mimeType %></p>
+  <p><strong>Size:</strong> <%= file.size %> bytes</p>
+  <form method="post" action="/files/share/<%= file.access.shareToken %>/download">
+    <button type="submit">Download</button>
+  </form>
+</section>
+<%- include("partials/footer") %>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> - FileBridge</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">FileBridge</div>
+    <nav class="nav">
+      <% if (currentUser) { %>
+        <a href="/files">Files</a>
+        <a href="/groups">Groups</a>
+        <span class="user">Signed in as <%= currentUser.userId %></span>
+        <form class="inline" action="/auth/logout" method="post">
+          <button type="submit">Logout</button>
+        </form>
+      <% } else { %>
+        <a href="/auth/login">Login</a>
+        <a href="/auth/register">Register</a>
+      <% } %>
+    </nav>
+  </header>
+  <main class="container">

@@ -1,0 +1,19 @@
+<%- include("../partials/header", { title: "Login" }) %>
+<h1>Login</h1>
+
+<% if (error) { %>
+  <p class="error"><%= error %></p>
+<% } %>
+
+<form method="post" action="/auth/login" class="card form">
+  <label>User ID or Email</label>
+  <input name="identifier" required value="<%= identifier || "" %>">
+
+  <label>Password</label>
+  <input type="password" name="password" required>
+
+  <button type="submit">Login</button>
+</form>
+
+<p>Need an account? <a href="/auth/register">Register</a></p>
+<%- include("../partials/footer") %>

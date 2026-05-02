@@ -1,0 +1,54 @@
+<%- include("partials/header", { title: "Groups" }) %>
+<h1>Groups</h1>
+
+<section class="card">
+  <h2>Create group</h2>
+  <form method="post" action="/groups" class="form">
+    <label>Name</label>
+    <input name="name" required>
+
+    <label>Member user IDs</label>
+    <input name="memberUserIds" placeholder="user1,user2">
+
+    <fieldset class="fieldset">
+      <legend>Permissions</legend>
+      <label><input type="checkbox" name="canUpload" checked> Upload</label>
+      <label><input type="checkbox" name="canEdit" checked> Edit</label>
+      <label><input type="checkbox" name="canShare" checked> Share</label>
+    </fieldset>
+
+    <button type="submit">Create group</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Your groups</h2>
+  <% if (!groups.length) { %>
+    <p>No groups yet.</p>
+  <% } else { %>
+    <% groups.forEach((group) => { %>
+      <div class="group">
+        <h3><%= group.name %></h3>
+        <p>Members: <%= group.members.map((m) => m.userId).join(", ") %></p>
+
+        <form method="post" action="/groups/<%= group._id %>/members" class="inline">
+          <input name="memberUserId" placeholder="userId">
+          <button type="submit">Add member</button>
+        </form>
+
+        <form method="post" action="/groups/<%= group._id %>/members/remove" class="inline">
+          <input name="memberUserId" placeholder="userId">
+          <button type="submit">Remove member</button>
+        </form>
+
+        <form method="post" action="/groups/<%= group._id %>/permissions" class="inline">
+          <label><input type="checkbox" name="canUpload" <%= group.permissions.canUpload ? "checked" : "" %>> Upload</label>
+          <label><input type="checkbox" name="canEdit" <%= group.permissions.canEdit ? "checked" : "" %>> Edit</label>
+          <label><input type="checkbox" name="canShare" <%= group.permissions.canShare ? "checked" : "" %>> Share</label>
+          <button type="submit">Update permissions</button>
+        </form>
+      </div>
+    <% }) %>
+  <% } %>
+</section>
+<%- include("partials/footer") %>
