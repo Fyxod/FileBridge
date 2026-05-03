@@ -56,6 +56,53 @@ function normalizeSort(sortField) {
   return "createdAt";
 }
 
+function uniqueSorted(values) {
+  return Array.from(new Set(values.filter(Boolean))).sort((a, b) =>
+    a.localeCompare(b),
+  );
+}
+
+function buildSuggestions(files, groups) {
+  const tags = new Set();
+  const folders = new Set();
+  const fileNames = new Set();
+  const mimeTypes = new Set();
+  const groupNames = new Set();
+
+  files.forEach((file) => {
+    if (file.name) {
+      fileNames.add(file.name);
+    }
+    if (file.originalName) {
+      fileNames.add(file.originalName);
+    }
+    if (file.folderPath) {
+      folders.add(file.folderPath);
+    }
+    if (file.mimeType) {
+      mimeTypes.add(file.mimeType);
+    }
+    (file.tags || []).forEach((tag) => tags.add(tag));
+  });
+
+  groups.forEach((group) => {
+    if (group.name) {
+      groupNames.add(group.name);
+    }
+  });
+
+  const searchTerms = new Set([...fileNames, ...tags]);
+
+  return {
+    groups: uniqueSorted(Array.from(groupNames)),
+    tags: uniqueSorted(Array.from(tags)),
+    folders: uniqueSorted(Array.from(folders)),
+    fileNames: uniqueSorted(Array.from(fileNames)),
+    mimeTypes: uniqueSorted(Array.from(mimeTypes)),
+    searchTerms: uniqueSorted(Array.from(searchTerms)),
+  };
+}
+
 function canAccessFile(file, user) {
   if (!user) {
     return false;
@@ -142,6 +189,9 @@ async function list(req, res) {
     { $sort: { totalSize: -1 } },
   ]);
 
+  const suggestions = buildSuggestions(files, groups);
+  const suggestionsJson = JSON.stringify(suggestions).replace(/</g, "\\u003c");
+
   res.render("dashboard", {
     title: "Dashboard",
     files,
@@ -151,6 +201,7 @@ async function list(req, res) {
     storageByType,
     filters: req.query,
     error: req.query.error || null,
+    suggestionsJson,
   });
 }
 
@@ -212,12 +263,10 @@ async function remove(req, res) {
   }
 
   if (file.owner.toString() !== user._id.toString()) {
-    return res
-      .status(403)
-      .render("error", {
-        title: "Forbidden",
-        error: { message: "Not allowed" },
-      });
+    return res.status(403).render("error", {
+      title: "Forbidden",
+      error: { message: "Not allowed" },
+    });
   }
 
   try {
@@ -378,12 +427,10 @@ async function download(req, res) {
   }
 
   if (!canAccessFile(file, user)) {
-    return res
-      .status(403)
-      .render("error", {
-        title: "Forbidden",
-        error: { message: "Not allowed" },
-      });
+    return res.status(403).render("error", {
+      title: "Forbidden",
+      error: { message: "Not allowed" },
+    });
   }
 
   return res.download(file.path, file.originalName);

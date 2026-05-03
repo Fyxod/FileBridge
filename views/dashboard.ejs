@@ -27,13 +27,13 @@
       <input type="file" name="file" required>
 
       <label>Display name</label>
-      <input name="name" placeholder="Optional name">
+      <input name="name" placeholder="Optional name" data-suggest="fileNames">
 
       <label>Tags</label>
-      <input name="tags" placeholder="tag1,tag2">
+      <input name="tags" placeholder="tag1,tag2" data-suggest="tags" data-suggest-multi="true">
 
       <label>Folder</label>
-      <input name="folderPath" placeholder="/projects">
+      <input name="folderPath" placeholder="/projects" data-suggest="folders">
 
       <label>Visibility</label>
       <select name="visibility">
@@ -45,10 +45,10 @@
       </select>
 
       <label>Allowed user IDs</label>
-      <input name="allowedUserIds" placeholder="user1,user2">
+      <input name="allowedUserIds" placeholder="user1,user2" data-suggest="users" data-suggest-multi="true">
 
       <label>Allowed group names</label>
-      <input name="allowedGroupNames" placeholder="team-alpha,team-beta">
+      <input name="allowedGroupNames" placeholder="team-alpha,team-beta" data-suggest="groups" data-suggest-multi="true">
 
       <button type="submit">Upload</button>
     </form>
@@ -61,13 +61,13 @@
     </div>
     <form method="get" action="/files" class="form">
       <label>Query</label>
-      <input name="q" value="<%= filters.q || "" %>">
+      <input name="q" value="<%= filters.q || "" %>" data-suggest="searchTerms">
 
       <label>Tag</label>
-      <input name="tag" value="<%= filters.tag || "" %>">
+      <input name="tag" value="<%= filters.tag || "" %>" data-suggest="tags">
 
       <label>Type</label>
-      <input name="type" value="<%= filters.type || "" %>">
+      <input name="type" value="<%= filters.type || "" %>" data-suggest="mimeTypes">
 
       <label>From</label>
       <input type="date" name="from" value="<%= filters.from || "" %>">
@@ -174,17 +174,17 @@
             <td>
               <div class="actions">
                 <form method="post" action="/files/<%= file._id %>/rename" class="inline action-form">
-                  <input name="name" value="<%= file.name %>">
+                  <input name="name" value="<%= file.name %>" data-suggest="fileNames">
                   <button type="submit">Rename</button>
                 </form>
 
                 <form method="post" action="/files/<%= file._id %>/move" class="inline action-form">
-                  <input name="folderPath" value="<%= file.folderPath %>">
+                  <input name="folderPath" value="<%= file.folderPath %>" data-suggest="folders">
                   <button type="submit">Move</button>
                 </form>
 
                 <form method="post" action="/files/<%= file._id %>/tags" class="inline action-form">
-                  <input name="tags" value="<%= (file.tags || []).join(", ") %>">
+                  <input name="tags" value="<%= (file.tags || []).join(", ") %>" data-suggest="tags" data-suggest-multi="true">
                   <button type="submit">Tags</button>
                 </form>
 
@@ -196,8 +196,8 @@
                     <option value="groups" <%= file.access.visibility === "groups" ? "selected" : "" %>>Groups</option>
                     <option value="link" <%= file.access.visibility === "link" ? "selected" : "" %>>Link</option>
                   </select>
-                  <input name="allowedUserIds" placeholder="user1,user2">
-                  <input name="allowedGroupNames" placeholder="team-alpha,team-beta">
+                  <input name="allowedUserIds" placeholder="user1,user2" data-suggest="users" data-suggest-multi="true">
+                  <input name="allowedGroupNames" placeholder="team-alpha,team-beta" data-suggest="groups" data-suggest-multi="true">
                   <button type="submit">Share</button>
                 </form>
 

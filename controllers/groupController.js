@@ -17,7 +17,21 @@ async function list(req, res) {
     .populate("members", "userId name")
     .lean();
 
-  res.render("groups", { title: "Groups", groups, error: null });
+  const groupNames = groups
+    .map((group) => group.name)
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
+  const suggestionsJson = JSON.stringify({ groups: groupNames }).replace(
+    /</g,
+    "\\u003c",
+  );
+
+  res.render("groups", {
+    title: "Groups",
+    groups,
+    error: null,
+    suggestionsJson,
+  });
 }
 
 async function create(req, res) {
@@ -69,12 +83,10 @@ async function addMember(req, res) {
   }
 
   if (group.owner.toString() !== req.session.userId.toString()) {
-    return res
-      .status(403)
-      .render("error", {
-        title: "Forbidden",
-        error: { message: "Not allowed" },
-      });
+    return res.status(403).render("error", {
+      title: "Forbidden",
+      error: { message: "Not allowed" },
+    });
   }
 
   const memberUserId = (req.body.memberUserId || "").trim();
@@ -104,12 +116,10 @@ async function removeMember(req, res) {
   }
 
   if (group.owner.toString() !== req.session.userId.toString()) {
-    return res
-      .status(403)
-      .render("error", {
-        title: "Forbidden",
-        error: { message: "Not allowed" },
-      });
+    return res.status(403).render("error", {
+      title: "Forbidden",
+      error: { message: "Not allowed" },
+    });
   }
 
   const memberUserId = (req.body.memberUserId || "").trim();
@@ -140,12 +150,10 @@ async function updatePermissions(req, res) {
   }
 
   if (group.owner.toString() !== req.session.userId.toString()) {
-    return res
-      .status(403)
-      .render("error", {
-        title: "Forbidden",
-        error: { message: "Not allowed" },
-      });
+    return res.status(403).render("error", {
+      title: "Forbidden",
+      error: { message: "Not allowed" },
+    });
   }
 
   const permissions = {

@@ -1,3 +1,7 @@
   </main>
+  <script>
+    window.FileBridgeSuggestions = <%- typeof suggestionsJson !== "undefined" ? suggestionsJson : "{}" %>;
+  </script>
+  <script src="/js/suggestions.js"></script>
 </body>
 </html>

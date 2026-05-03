@@ -19,10 +19,10 @@
   </div>
   <form method="post" action="/groups" class="form">
     <label>Name</label>
-    <input name="name" required>
+    <input name="name" required data-suggest="groups">
 
     <label>Member user IDs</label>
-    <input name="memberUserIds" placeholder="user1,user2">
+    <input name="memberUserIds" placeholder="user1,user2" data-suggest="users" data-suggest-multi="true">
 
     <fieldset class="fieldset permission-grid">
       <legend>Permissions</legend>
@@ -63,12 +63,12 @@
 
         <div class="group-actions">
         <form method="post" action="/groups/<%= group._id %>/members" class="inline action-form">
-          <input name="memberUserId" placeholder="userId">
+          <input name="memberUserId" placeholder="userId" data-suggest="users">
           <button type="submit">Add member</button>
         </form>
 
         <form method="post" action="/groups/<%= group._id %>/members/remove" class="inline action-form">
-          <input name="memberUserId" placeholder="userId">
+          <input name="memberUserId" placeholder="userId" data-suggest="users">
           <button class="button-secondary" type="submit">Remove member</button>
         </form>
 
